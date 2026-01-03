@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CHOUNDESHWARI DIGITAL – Gallery</title>
+<title>CHOUNDESHWARI DIGITAL | Gallery</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 :root{
-  --bg:#0f0f12;
-  --card:#18181d;
-  --accent:#7c8cff;
+  --bg:#0b0b0f;
+  --card:#16161d;
+  --accent:#8b9cff;
   --text:#ffffff;
-  --muted:#aaa;
+  --muted:#9a9a9a;
 }
 
 *{box-sizing:border-box}
@@ -27,21 +27,20 @@ body{
 header{
   position:sticky;
   top:0;
-  z-index:10;
-  background:rgba(15,15,18,0.9);
-  backdrop-filter:blur(10px);
-  padding:14px 16px;
+  z-index:20;
+  background:rgba(11,11,15,0.85);
+  backdrop-filter:blur(14px);
+  padding:14px 18px;
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  border-bottom:1px solid #222;
+  align-items:center;
+  border-bottom:1px solid #1e1e28;
 }
 
 header h1{
-  font-size:16px;
-  font-weight:600;
+  font-size:15px;
+  letter-spacing:1.5px;
   margin:0;
-  letter-spacing:1px;
 }
 
 header span{
@@ -52,71 +51,98 @@ header span{
 /* GALLERY GRID */
 .gallery{
   padding:14px;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-  gap:12px;
+  columns:2;
+  column-gap:12px;
 }
 
+@media(min-width:600px){ .gallery{ columns:3 } }
+@media(min-width:900px){ .gallery{ columns:4 } }
+
 .card{
+  break-inside:avoid;
+  margin-bottom:12px;
   position:relative;
-  background:var(--card);
-  border-radius:14px;
+  border-radius:16px;
   overflow:hidden;
+  background:var(--card);
   cursor:pointer;
 }
 
 .card img{
   width:100%;
-  height:100%;
-  object-fit:cover;
+  display:block;
   transition:transform .4s ease;
 }
 
 .card:hover img{
-  transform:scale(1.05);
+  transform:scale(1.04);
 }
 
-/* DOWNLOAD ICON */
+/* Overlay */
+.overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.6),transparent);
+  opacity:0;
+  transition:.3s;
+}
+
+.card:hover .overlay{
+  opacity:1;
+}
+
 .download{
   position:absolute;
-  bottom:8px;
-  right:8px;
-  background:rgba(0,0,0,0.6);
+  bottom:10px;
+  right:10px;
+  background:rgba(0,0,0,.6);
+  padding:8px 10px;
+  border-radius:10px;
+  text-decoration:none;
   color:#fff;
   font-size:14px;
-  padding:6px 8px;
-  border-radius:8px;
-  text-decoration:none;
 }
 
 /* LIGHTBOX */
 .lightbox{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.9);
+  background:rgba(0,0,0,.92);
   display:none;
-  align-items:center;
-  justify-content:center;
+  flex-direction:column;
   z-index:999;
-}
-
-.lightbox img{
-  max-width:95%;
-  max-height:85%;
-  border-radius:10px;
 }
 
 .lightbox.active{
   display:flex;
 }
 
-.close{
-  position:absolute;
-  top:15px;
-  right:20px;
+.lightbox-header{
+  padding:12px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+}
+
+.lightbox img{
+  max-width:100%;
+  max-height:calc(100vh - 120px);
+  margin:auto;
+}
+
+.controls{
+  display:flex;
+  justify-content:space-between;
+  padding:14px 30px;
+}
+
+.controls button{
+  background:none;
+  border:none;
+  color:#fff;
   font-size:28px;
   cursor:pointer;
-  color:#fff;
 }
 </style>
 </head>
@@ -125,15 +151,24 @@ header span{
 
 <header>
   <h1>CHOUNDESHWARI DIGITAL</h1>
-  <span>Customer Gallery</span>
+  <span id="custName">Customer Gallery</span>
 </header>
 
 <div class="gallery" id="gallery"></div>
 
-<!-- Lightbox -->
+<!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
-  <span class="close" onclick="closeLightbox()">×</span>
+  <div class="lightbox-header">
+    <span id="counter">1 / 1</span>
+    <span style="cursor:pointer" onclick="closeLightbox()">✕</span>
+  </div>
+
   <img id="lightboxImg">
+
+  <div class="controls">
+    <button onclick="prevImg()">‹</button>
+    <button onclick="nextImg()">›</button>
+  </div>
 </div>
 
 <script>
@@ -141,43 +176,63 @@ const params = new URLSearchParams(window.location.search);
 const folder = params.get("folder");
 
 if(!folder){
-  document.body.innerHTML =
-    "<h2 style='text-align:center;margin-top:40px'>Access denied</h2>";
+  document.body.innerHTML="<h2 style='text-align:center;margin-top:40px'>Access denied</h2>";
   throw new Error("No folder");
 }
 
+document.getElementById("custName").innerText = folder.toUpperCase();
+
 const gallery = document.getElementById("gallery");
-const MAX_IMAGES = 100;
+const images = [];
+const MAX = 100;
+let current = 0;
 
-for(let i=1;i<=MAX_IMAGES;i++){
-  const img = document.createElement("img");
-  img.src = `customers/${folder}/${i}.jpg`;
+// Load images
+for(let i=1;i<=MAX;i++){
+  const src = `customers/${folder}/${i}.jpg`;
+  const img = new Image();
+  img.src = src;
 
-  img.onerror = () => img.remove();
+  img.onload = () => {
+    images.push(src);
 
-  img.onclick = () => openLightbox(img.src);
+    const card = document.createElement("div");
+    card.className="card";
 
-  const card = document.createElement("div");
-  card.className = "card";
-  card.appendChild(img);
+    card.innerHTML = `
+      <img src="${src}">
+      <div class="overlay"></div>
+      <a class="download" href="${src}" download>⬇</a>
+    `;
 
-  const dl = document.createElement("a");
-  dl.className = "download";
-  dl.innerText = "⬇";
-  dl.href = img.src;
-  dl.download = "";
-
-  card.appendChild(dl);
-  gallery.appendChild(card);
+    card.onclick = () => openLightbox(images.indexOf(src));
+    gallery.appendChild(card);
+  };
 }
 
-function openLightbox(src){
-  document.getElementById("lightboxImg").src = src;
+// Lightbox functions
+function openLightbox(index){
+  current=index;
   document.getElementById("lightbox").classList.add("active");
+  showImg();
 }
 
 function closeLightbox(){
   document.getElementById("lightbox").classList.remove("active");
+}
+
+function showImg(){
+  document.getElementById("lightboxImg").src = images[current];
+  document.getElementById("counter").innerText =
+    `${current+1} / ${images.length}`;
+}
+
+function nextImg(){
+  if(current < images.length-1){ current++; showImg(); }
+}
+
+function prevImg(){
+  if(current > 0){ current--; showImg(); }
 }
 </script>
 
