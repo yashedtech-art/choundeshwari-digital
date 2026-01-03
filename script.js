@@ -4,38 +4,49 @@ const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTFz1yeN
 let users = [];
 
 // Fetch customer login data from Google Sheet
-fetch(SHEET_CSV_URL)
-  .then(res => res.text())
-  .then(csv => {
-    const rows = csv.split("\n").slice(1);
-    rows.forEach(r => {
-      const [customer_id, mobile, password, folder] = r.split(",");
-      if (customer_id && mobile && password && folder) {
-        users.push({
-          id: customer_id.trim(),
-          mobile: mobile.trim(),
-          password: password.trim(),
-          folder: folder.trim()
-        });
-      }
-    });
-  })
-  .catch(err => console.error("Error loading sheet data:", err));
+async function loadUsers() {
+    try {
+        const res = await fetch(SHEET_CSV_URL);
+        const csv = await res.text();
+        const rows = csv.split("\n").slice(1); // skip header
 
-// Login function called from form
+        users = rows.map(r => {
+            const [customer_id, mobile, password, folder] = r.split(",");
+            return {
+                id: customer_id?.trim(),
+                mobile: mobile?.trim(),
+                password: password?.trim(),
+                folder: folder?.trim()
+            };
+        }).filter(u => u.id && u.mobile && u.password && u.folder);
+
+    } catch (err) {
+        console.error("Error loading sheet data:", err);
+    }
+}
+
+// Call loadUsers immediately
+loadUsers();
+
+// Login function
 function login(event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  const m = document.getElementById("mobile").value.trim();
-  const p = document.getElementById("password").value.trim();
-  const msg = document.getElementById("msg");
+    const m = document.getElementById("mobile").value.trim();
+    const p = document.getElementById("password").value.trim();
+    const msg = document.getElementById("msg");
 
-  const user = users.find(u => u.mobile === m && u.password === p);
+    if (users.length === 0) {
+        msg.innerText = "Please wait, loading data...";
+        return;
+    }
 
-  if (user) {
-    // Redirect to gallery page with their folder
-    window.location.href = `gallery.html?folder=${user.folder}`;
-  } else {
-    msg.innerText = "Invalid mobile number or password";
-  }
+    const user = users.find(u => u.mobile === m && u.password === p);
+
+    if (user) {
+        // Redirect to gallery page with their folder
+        window.location.href = `gallery.html?folder=${user.folder}`;
+    } else {
+        msg.innerText = "Invalid mobile number or password";
+    }
 }
