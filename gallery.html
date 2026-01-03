@@ -3,132 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Photos - CHOUNDESHWARI DIGITAL</title>
+<title>CHOUNDESHWARI DIGITAL - Gallery</title>
 <style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #f3e5f5, #e3f2fd);
-        margin: 0;
-        padding: 20px;
-        color: #333;
-    }
-    h2 {
-        text-align: center;
-        font-size: 32px;
-        color: #1a237e;
-        margin-bottom: 20px;
-    }
-    #gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        justify-items: center;
-    }
-    .photo-card {
-        position: relative;
-        overflow: hidden;
-        border-radius: 16px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        transition: transform 0.3s, box-shadow 0.3s;
-        cursor: pointer;
-    }
-    .photo-card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-    }
-    .photo-card img {
-        width: 100%;
-        height: auto;
-        display: block;
-        border-radius: 16px;
-    }
-    .download-btn {
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-        color: white;
-        padding: 8px 14px;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 500;
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-    .photo-card:hover .download-btn {
-        opacity: 1;
-    }
-
-    /* Lightbox */
-    #lightbox {
-        position: fixed;
-        top:0; left:0;
-        width: 100vw; height: 100vh;
-        background: rgba(0,0,0,0.8);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 999;
-    }
-    #lightbox img {
-        max-width: 90%;
-        max-height: 90%;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
+body { font-family:'Segoe UI', sans-serif; padding:20px; background:#f5f7fa; }
+h1 { text-align:center; color:#1a237e; margin-bottom:20px; }
+.gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:15px; }
+.gallery img { width:100%; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2); cursor:pointer; transition:0.3s; }
+.gallery img:hover { transform:scale(1.05); }
+button.download { margin-top:5px; padding:8px 10px; background:#667eea; color:white; border:none; border-radius:6px; cursor:pointer; }
+#msg { text-align:center; margin-top:20px; color:red; }
 </style>
 </head>
 <body>
-<h2>Your Photos</h2>
-<div id="gallery"></div>
-
-<!-- Lightbox -->
-<div id="lightbox" onclick="closeLightbox()">
-    <img id="lightbox-img" src="" alt="Full Image">
-</div>
+<h1>Your Photos</h1>
+<div class="gallery" id="gallery"></div>
+<p id="msg"></p>
 
 <script>
+const galleryDiv = document.getElementById("gallery");
+const msg = document.getElementById("msg");
+
+// Get customer folder from URL
 const params = new URLSearchParams(window.location.search);
 const folder = params.get("folder");
-const gallery = document.getElementById("gallery");
 
-if(!folder){
-    document.body.innerHTML = "<h2>Access Denied</h2>";
+if (!folder) {
+    msg.innerText = "No folder specified.";
 } else {
-    for(let i=1; i<=50; i++){
-        const imgSrc = `customers/${folder}/img${i}.jpg`;
-
-        const img = document.createElement("img");
-        img.src = imgSrc;
-        img.alt = "Photo";
-
-        const card = document.createElement("div");
-        card.className = "photo-card";
-
-        const downloadBtn = document.createElement("a");
-        downloadBtn.href = imgSrc;
-        downloadBtn.download = imgSrc.split("/").pop();
-        downloadBtn.className = "download-btn";
-        downloadBtn.innerText = "Download";
-
-        card.appendChild(img);
-        card.appendChild(downloadBtn);
-        gallery.appendChild(card);
-
-        img.onerror = () => card.remove(); // Remove if image doesn't exist
-
-        // Click to open lightbox
-        img.addEventListener("click", () => {
-            document.getElementById("lightbox-img").src = imgSrc;
-            document.getElementById("lightbox").style.display = "flex";
+    // Fetch photos.json for this customer
+    fetch(`customers/${folder}/photos.json`)
+    .then(res => res.json())
+    .then(photos => {
+        if(photos.length === 0) {
+            msg.innerText = "No photos available.";
+            return;
+        }
+        photos.forEach(photo => {
+            const div = document.createElement("div");
+            div.innerHTML = `
+                <img src="customers/${folder}/${photo}" alt="Photo">
+                <button class="download" onclick="downloadPhoto('${folder}','${photo}')">Download</button>
+            `;
+            galleryDiv.appendChild(div);
         });
-    }
+    })
+    .catch(err => {
+        console.error(err);
+        msg.innerText = "Cannot load photos.";
+    });
 }
 
-// Close lightbox
-function closeLightbox(){
-    document.getElementById("lightbox").style.display = "none";
+// Download function
+function downloadPhoto(folder, photo) {
+    const link = document.createElement("a");
+    link.href = `customers/${folder}/${photo}`;
+    link.download = photo;
+    link.click();
 }
 </script>
 </body>
