@@ -2,134 +2,239 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Photos - CHOUNDESHWARI DIGITAL</title>
-<style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #f3e5f5, #e3f2fd);
-        margin: 0;
-        padding: 20px;
-        color: #333;
-    }
-    h2 {
-        text-align: center;
-        font-size: 32px;
-        color: #1a237e;
-        margin-bottom: 20px;
-    }
-    #gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        justify-items: center;
-    }
-    .photo-card {
-        position: relative;
-        overflow: hidden;
-        border-radius: 16px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        transition: transform 0.3s, box-shadow 0.3s;
-        cursor: pointer;
-    }
-    .photo-card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-    }
-    .photo-card img {
-        width: 100%;
-        height: auto;
-        display: block;
-        border-radius: 16px;
-    }
-    .download-btn {
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-        color: white;
-        padding: 8px 14px;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 500;
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-    .photo-card:hover .download-btn {
-        opacity: 1;
-    }
+<title>CHOUNDESHWARI DIGITAL | Gallery</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    /* Lightbox */
-    #lightbox {
-        position: fixed;
-        top:0; left:0;
-        width: 100vw; height: 100vh;
-        background: rgba(0,0,0,0.8);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 999;
-    }
-    #lightbox img {
-        max-width: 90%;
-        max-height: 90%;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
+<style>
+:root{
+  --bg:#0b0b0f;
+  --card:#16161d;
+  --accent:#8b9cff;
+  --text:#ffffff;
+  --muted:#9a9a9a;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* HEADER */
+header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(11,11,15,0.85);
+  backdrop-filter:blur(14px);
+  padding:14px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #1e1e28;
+}
+
+header h1{
+  font-size:15px;
+  letter-spacing:1.5px;
+  margin:0;
+}
+
+header span{
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* GALLERY GRID */
+.gallery{
+  padding:14px;
+  columns:2;
+  column-gap:12px;
+}
+
+@media(min-width:600px){ .gallery{ columns:3 } }
+@media(min-width:900px){ .gallery{ columns:4 } }
+
+.card{
+  break-inside:avoid;
+  margin-bottom:12px;
+  position:relative;
+  border-radius:16px;
+  overflow:hidden;
+  background:var(--card);
+  cursor:pointer;
+}
+
+.card img{
+  width:100%;
+  display:block;
+  transition:transform .4s ease;
+}
+
+.card:hover img{
+  transform:scale(1.04);
+}
+
+/* Overlay */
+.overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.6),transparent);
+  opacity:0;
+  transition:.3s;
+}
+
+.card:hover .overlay{
+  opacity:1;
+}
+
+.download{
+  position:absolute;
+  bottom:10px;
+  right:10px;
+  background:rgba(0,0,0,.6);
+  padding:8px 10px;
+  border-radius:10px;
+  text-decoration:none;
+  color:#fff;
+  font-size:14px;
+}
+
+/* LIGHTBOX */
+.lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.92);
+  display:none;
+  flex-direction:column;
+  z-index:999;
+}
+
+.lightbox.active{
+  display:flex;
+}
+
+.lightbox-header{
+  padding:12px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+}
+
+.lightbox img{
+  max-width:100%;
+  max-height:calc(100vh - 120px);
+  margin:auto;
+}
+
+.controls{
+  display:flex;
+  justify-content:space-between;
+  padding:14px 30px;
+}
+
+.controls button{
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:28px;
+  cursor:pointer;
+}
 </style>
 </head>
-<body>
-<h2>Your Photos</h2>
-<div id="gallery"></div>
 
-<!-- Lightbox -->
-<div id="lightbox" onclick="closeLightbox()">
-    <img id="lightbox-img" src="" alt="Full Image">
+<body>
+
+<header>
+  <h1>CHOUNDESHWARI DIGITAL</h1>
+  <span id="custName">Customer Gallery</span>
+</header>
+
+<div class="gallery" id="gallery"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-header">
+    <span id="counter">1 / 1</span>
+    <span style="cursor:pointer" onclick="closeLightbox()">✕</span>
+  </div>
+
+  <img id="lightboxImg">
+
+  <div class="controls">
+    <button onclick="prevImg()">‹</button>
+    <button onclick="nextImg()">›</button>
+  </div>
 </div>
 
 <script>
 const params = new URLSearchParams(window.location.search);
 const folder = params.get("folder");
-const gallery = document.getElementById("gallery");
 
 if(!folder){
-    document.body.innerHTML = "<h2>Access Denied</h2>";
-} else {
-    for(let i=1; i<=50; i++){
-        const imgSrc = `customers/${folder}/img${i}.jpg`;
-
-        const img = document.createElement("img");
-        img.src = imgSrc;
-        img.alt = "Photo";
-
-        const card = document.createElement("div");
-        card.className = "photo-card";
-
-        const downloadBtn = document.createElement("a");
-        downloadBtn.href = imgSrc;
-        downloadBtn.download = imgSrc.split("/").pop();
-        downloadBtn.className = "download-btn";
-        downloadBtn.innerText = "Download";
-
-        card.appendChild(img);
-        card.appendChild(downloadBtn);
-        gallery.appendChild(card);
-
-        img.onerror = () => card.remove(); // Remove if image doesn't exist
-
-        // Click to open lightbox
-        img.addEventListener("click", () => {
-            document.getElementById("lightbox-img").src = imgSrc;
-            document.getElementById("lightbox").style.display = "flex";
-        });
-    }
+  document.body.innerHTML="<h2 style='text-align:center;margin-top:40px'>Access denied</h2>";
+  throw new Error("No folder");
 }
 
-// Close lightbox
+document.getElementById("custName").innerText = folder.toUpperCase();
+
+const gallery = document.getElementById("gallery");
+const images = [];
+const MAX = 100;
+let current = 0;
+
+// Load images
+for(let i=1;i<=MAX;i++){
+  const src = `customers/${folder}/${i}.jpg`;
+  const img = new Image();
+  img.src = src;
+
+  img.onload = () => {
+    images.push(src);
+
+    const card = document.createElement("div");
+    card.className="card";
+
+    card.innerHTML = `
+      <img src="${src}">
+      <div class="overlay"></div>
+      <a class="download" href="${src}" download>⬇</a>
+    `;
+
+    card.onclick = () => openLightbox(images.indexOf(src));
+    gallery.appendChild(card);
+  };
+}
+
+// Lightbox functions
+function openLightbox(index){
+  current=index;
+  document.getElementById("lightbox").classList.add("active");
+  showImg();
+}
+
 function closeLightbox(){
-    document.getElementById("lightbox").style.display = "none";
+  document.getElementById("lightbox").classList.remove("active");
+}
+
+function showImg(){
+  document.getElementById("lightboxImg").src = images[current];
+  document.getElementById("counter").innerText =
+    `${current+1} / ${images.length}`;
+}
+
+function nextImg(){
+  if(current < images.length-1){ current++; showImg(); }
+}
+
+function prevImg(){
+  if(current > 0){ current--; showImg(); }
 }
 </script>
+
 </body>
 </html>
