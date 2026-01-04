@@ -205,6 +205,87 @@ header span{
   background:var(--accent);
   box-shadow:0 0 0 6px var(--accent-soft);
 }
+
+/* MAGIC LOADING STATE */
+.card{
+  position:relative;
+}
+
+/* Hide image initially, fade in when loaded */
+.card img{
+  opacity:0;
+  animation:imgReveal 1s ease forwards;
+  animation-delay:.3s;
+}
+
+@keyframes imgReveal{
+  to{ opacity:1 }
+}
+
+/* Magic Loader Overlay */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:5;
+  background:
+    radial-gradient(circle at center,rgba(124,140,255,.25),transparent 60%),
+    rgba(15,16,30,.85);
+  backdrop-filter:blur(6px);
+  animation:magicFadeOut 1.2s ease forwards;
+  pointer-events:none;
+}
+
+/* SVG Magic Elements */
+.card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:6;
+  pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>\
+<g fill='none' stroke='%238b9cff' stroke-width='2'>\
+<circle cx='100' cy='100' r='30'>\
+<animateTransform attributeName='transform' type='rotate' from='0 100 100' to='360 100 100' dur='2s' repeatCount='indefinite'/>\
+</circle>\
+<circle cx='100' cy='40' r='4' fill='%23ffffff'>\
+<animate attributeName='cy' from='40' to='160' dur='1.4s' repeatCount='indefinite'/>\
+</circle>\
+<circle cx='40' cy='100' r='3' fill='%23ffffff'>\
+<animate attributeName='cx' from='40' to='160' dur='1.2s' repeatCount='indefinite'/>\
+</circle>\
+<circle cx='160' cy='100' r='3' fill='%23ffffff'>\
+<animate attributeName='cx' from='160' to='40' dur='1.6s' repeatCount='indefinite'/>\
+</circle>\
+</g>\
+</svg>");
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:120px;
+  animation:magicFadeOut 1.2s ease forwards;
+}
+
+/* Text */
+.card .magic-text{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:7;
+  font-size:13px;
+  letter-spacing:2px;
+  color:#cfd6ff;
+  animation:magicFadeOut 1.2s ease forwards;
+}
+
+/* Fade loader away */
+@keyframes magicFadeOut{
+  0%{ opacity:1 }
+  70%{ opacity:1 }
+  100%{ opacity:0; visibility:hidden }
+}
 </style>
 </head>
 
