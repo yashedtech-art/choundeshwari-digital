@@ -319,49 +319,6 @@ header span{
   to{opacity:1}
 }
 
-/* ===============================
-   2. AI MAGIC OVERLAY
-================================*/
-.card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:5;
-  background:
-    radial-gradient(circle at center,rgba(124,140,255,.25),transparent 65%),
-    rgba(10,12,24,.85);
-  backdrop-filter:blur(6px);
-  animation:magicOut 1.6s ease forwards;
-  pointer-events:none;
-}
-
-.card::after{
-  content:"ENHANCING MAGIC ✨";
-  position:absolute;
-  inset:0;
-  z-index:6;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:11px;
-  letter-spacing:3px;
-  color:#d6dcff;
-  animation:
-    textPulse 1.2s ease infinite,
-    magicOut 1.6s ease forwards;
-  pointer-events:none;
-}
-
-@keyframes textPulse{
-  0%,100%{opacity:.5}
-  50%{opacity:1}
-}
-
-@keyframes magicOut{
-  0%{opacity:1}
-  75%{opacity:1}
-  100%{opacity:0; visibility:hidden}
-}
 
 /* ===============================
    3. SCROLL REVEAL EFFECT
@@ -452,17 +409,7 @@ header span{
   }
 }
 
-/* ===============================
-   8. MICRO COPY EMOTION
-================================*/
-header::after{
-  content:"Crafting memories with care ✦";
-  display:block;
-  font-size:10px;
-  letter-spacing:2px;
-  color:rgba(255,255,255,.35);
-  margin-top:4px;
-}
+
 </style>
 </head>
 
