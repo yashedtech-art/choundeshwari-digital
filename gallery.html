@@ -409,7 +409,78 @@ header span{
   }
 }
 
+/* ===============================
+   🪄 ORBITING SVG MAGIC STARS
+================================*/
+.card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:7;
+  pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>\
+<g fill='none'>\
+<circle cx='100' cy='100' r='38' stroke='%23ffffff' stroke-opacity='.25' stroke-width='1'>\
+<animateTransform attributeName='transform' type='rotate' from='0 100 100' to='360 100 100' dur='4s' repeatCount='indefinite'/>\
+</circle>\
+<circle cx='100' cy='40' r='3' fill='%23ffffff'>\
+<animateTransform attributeName='transform' type='rotate' from='0 100 100' to='360 100 100' dur='2.4s' repeatCount='indefinite'/>\
+</circle>\
+<circle cx='160' cy='100' r='2.5' fill='%23ffffff'>\
+<animateTransform attributeName='transform' type='rotate' from='360 100 100' to='0 100 100' dur='3s' repeatCount='indefinite'/>\
+</circle>\
+<circle cx='60' cy='140' r='2' fill='%23ffffff'>\
+<animateTransform attributeName='transform' type='rotate' from='0 100 100' to='360 100 100' dur='3.6s' repeatCount='indefinite'/>\
+</circle>\
+</g>\
+</svg>");
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:140px;
+  opacity:.85;
+  animation:magicFade 1.8s ease forwards;
+}
 
+@keyframes magicFade{
+  0%{opacity:1}
+  70%{opacity:1}
+  100%{opacity:0}
+}
+
+/* ===============================
+   🌈 COLOR-TONE ADAPTIVE GLOW
+   (Visual Illusion – Pro Trick)
+================================*/
+.card{
+  position:relative;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  z-index:-1;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,180,120,.35), transparent 40%),
+    radial-gradient(circle at 70% 70%, rgba(120,160,255,.35), transparent 45%);
+  filter:blur(35px);
+  opacity:.6;
+  transition:.6s ease;
+}
+
+/* Hover = stronger glow */
+.card:hover::before{
+  opacity:.9;
+  transform:scale(1.05);
+}
+
+/* Lightbox cinematic glow */
+.lightbox img{
+  box-shadow:
+    0 0 80px rgba(120,140,255,.35),
+    0 30px 90px rgba(0,0,0,.7);
+}
 </style>
 </head>
 
