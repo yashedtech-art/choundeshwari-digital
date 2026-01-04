@@ -5,6 +5,9 @@
 <title>CHOUNDESHWARI DIGITAL | Gallery</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-KY4SmK6pDz3Ix6A2a5XlVwJJhQmJbZKKpTRv0dqT1qZrhfxYJt8kQ3TOSbEoYfXcAgyK7HqkUG4vE4Y7uP4FZg==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
 <style>
 :root{
   --bg:#0b0c12;
@@ -112,24 +115,28 @@ header span{
 }
 
 /* Download Button */
-.download{
-  position:absolute;
-  bottom:12px;
-  right:12px;
-  background:rgba(0,0,0,.55);
-  backdrop-filter:blur(8px);
-  padding:8px 12px;
-  border-radius:12px;
-  text-decoration:none;
-  color:#fff;
-  font-size:14px;
-  box-shadow:0 6px 18px rgba(0,0,0,.4);
-  transition:.25s;
+.download {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(8px);
+  padding: 8px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.4);
+  transition: .25s;
+  z-index: 10; /* make sure it's above pseudo-elements */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.download:hover{
-  background:var(--accent);
-  box-shadow:0 0 0 4px var(--accent-soft);
+.download i {
+  font-size: 16px;
+  pointer-events: none;
 }
 
 /* LIGHTBOX */
@@ -446,7 +453,7 @@ header span{
 <body>
 
 <header>
-  <h1>CHOUNDESHWARI DIGITAL</h1>
+  <h1><span><i class="fa-solid fa-camera-retro"></i></span> CHOUNDESHWARI DIGITAL</h1>
   <span id="custName">Customer Gallery</span>
 </header>
 
@@ -496,10 +503,12 @@ for(let i=1;i<=MAX;i++){
     card.className="card";
 
     card.innerHTML = `
-      <img src="${src}">
-      <div class="overlay"></div>
-      <a class="download" href="${src}" download>⬇</a>
-    `;
+  <img src="${src}">
+  <div class="overlay"></div>
+  <a class="download" href="${src}" download>
+    <i class="fa-solid fa-download"></i>
+  </a>
+`;
 
     card.onclick = () => openLightbox(images.indexOf(src));
     gallery.appendChild(card);
