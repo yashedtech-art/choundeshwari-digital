@@ -447,6 +447,123 @@ header span{
   position:relative;
   z-index:2;
 }
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.about-btn{
+  background:rgba(255,255,255,.08);
+  border:none;
+  color:#fff;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.25s ease;
+}
+
+.about-btn:hover{
+  background:var(--accent);
+  box-shadow:0 0 0 6px var(--accent-soft);
+}
+
+
+.about-btn{
+  background:rgba(255,255,255,.08);
+  border:none;
+  color:#fff;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.about-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  backdrop-filter:blur(12px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+
+.about-overlay.active{
+  display:flex;
+}
+
+.about-card{
+  background:var(--card);
+  border-radius:20px;
+  padding:26px;
+  max-width:420px;
+  width:90%;
+  box-shadow:0 0 0 1px var(--border), 0 30px 80px rgba(0,0,0,.6);
+  animation:fadeUp .4s ease;
+}
+
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(20px)}
+  to{opacity:1; transform:none}
+}
+
+.close-about{
+  position:absolute;
+  top:14px;
+  right:14px;
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.legacy{
+  margin:14px 0;
+  padding:10px;
+  border-radius:12px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  text-align:center;
+  font-weight:600;
+}
+
+.services{
+  list-style:none;
+  padding:0;
+  margin:16px 0;
+}
+
+.services li{
+  margin:8px 0;
+  color:var(--muted);
+}
+
+.about-actions{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+}
+
+.about-actions a{
+  flex:1;
+  text-align:center;
+  padding:10px;
+  border-radius:12px;
+  background:var(--accent);
+  color:#fff;
+  text-decoration:none;
+  font-size:14px;
+}
 </style>
 </head>
 
@@ -454,6 +571,11 @@ header span{
 
 <header>
   <h1><span><i class="fa-solid fa-camera-retro"></i></span> CHOUNDESHWARI DIGITAL</h1>
+  
+  <button class="about-btn" onclick="openAbout()">
+  <i class="fa-solid fa-circle-info"></i>
+</button>
+
   <span id="custName">Customer Gallery</span>
 </header>
 
@@ -474,6 +596,53 @@ header span{
   </div>
 </div>
 
+
+<div class="about-overlay" id="about">
+  <div class="about-card">
+    
+    <button class="close-about" onclick="closeAbout()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <h2>
+      <i class="fa-solid fa-camera-retro"></i>
+      CHOUNDESHWARI DIGITAL
+    </h2>
+
+    <p class="tagline">
+      Working in all photography sections
+    </p>
+
+    <div class="legacy">
+      <i class="fa-solid fa-award"></i>
+      Celebrating <strong>20+ Years of Legacy</strong>
+    </div>
+
+    <ul class="services">
+      <li><i class="fa-solid fa-heart"></i> Wedding Photography</li>
+      <li><i class="fa-solid fa-ring"></i> Pre-Wedding Shoots</li>
+      <li><i class="fa-solid fa-user"></i> Portraits</li>
+      <li><i class="fa-solid fa-calendar-days"></i> Events</li>
+      <li><i class="fa-solid fa-camera"></i> Outdoor Shoots</li>
+    </ul>
+
+    <div class="address">
+      <i class="fa-solid fa-location-dot"></i>
+      Near Panchayat Samiti Gate, Jafrabad, Maharashtra
+    </div>
+
+    <div class="about-actions">
+      <a href="tel:7588598293"><i class="fa-solid fa-phone"></i> Call</a>
+      <a href="https://wa.me/917588598293" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+      </a>
+      <a href="tel:7588598293">
+        <i class="fa-solid fa-calendar-check"></i> Book a Shoot
+      </a>
+    </div>
+
+  </div>
+</div>
 <script>
 const params = new URLSearchParams(window.location.search);
 const folder = params.get("folder");
@@ -540,6 +709,14 @@ function prevImg(){
   if(current > 0){ current--; showImg(); }
 }
 </script>
+<script>
+function openAbout(){
+  document.getElementById("about").classList.add("active");
+}
 
+function closeAbout(){
+  document.getElementById("about").classList.remove("active");
+}
+</script>
 </body>
 </html>
