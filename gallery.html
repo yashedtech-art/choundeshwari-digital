@@ -447,46 +447,44 @@ header span{
   position:fixed;
   inset:0;
   z-index:9999;
-  background:
-    radial-gradient(circle at center,rgba(124,140,255,.25),transparent 60%),
-    #0b0c12;
+  pointer-events:none;
   display:flex;
   align-items:center;
   justify-content:center;
-  animation:fadeIn .3s ease;
+  transition:.6s ease;
 }
 
-#globalLoader.hidden{
-  animation:fadeOut .6s ease forwards;
-}
-
-@keyframes fadeOut{
-  to{
-    opacity:0;
-    visibility:hidden;
-  }
-}
-
-.magic{
+#magicText{
   text-align:center;
-  font-size:14px;
+  font-size:15px;
   letter-spacing:3px;
   color:#dfe4ff;
+  transition:.6s ease;
 }
 
-.magic span{
+#magicText span{
   display:block;
   margin-top:10px;
   font-size:11px;
-  letter-spacing:2px;
   opacity:.7;
-  animation:pulse 1.4s infinite;
 }
 
-@keyframes pulse{
-  0%,100%{opacity:.4}
-  50%{opacity:1}
+/* Loader moves down */
+#globalLoader.moving{
+  align-items:flex-start;
 }
+
+#globalLoader.moving #magicText{
+  margin-top:14vh;
+}
+
+/* Loader disappears */
+#globalLoader.done{
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .6s ease;
+}
+
 </style>
 </head>
 
@@ -498,9 +496,9 @@ header span{
 </header>
 
 <div id="globalLoader">
-  <div class="magic">
+  <div id="magicText">
     ✨ Creating Magic ✨
-    <span>Preparing memories…</span>
+    <span id="progressText">Preparing memories…</span>
   </div>
 </div>
 
@@ -522,9 +520,9 @@ header span{
 </div>
 
 <script>
-    
-    let loadedCount = 0;
-    
+let totalTried = 0;
+let loadedCount = 0;
+
 const params = new URLSearchParams(window.location.search);
 const folder = params.get("folder");
 
@@ -538,61 +536,47 @@ document.getElementById("custName").innerText = folder.toUpperCase();
 const gallery = document.getElementById("gallery");
 const images = [];
 const MAX = 100;
-let current = 0;
 
-// Load images
-for(let i=1;i<=MAX;i++){
+// Try loading images
+for(let i = 1; i <= MAX; i++){
   const src = `customers/${folder}/${i}.jpg`;
   const img = new Image();
+  totalTried++;
   img.src = src;
 
   img.onload = () => {
+    loadedCount++;
+
+    // Update progress text
+    document.getElementById("progressText").innerText =
+      `Loaded ${loadedCount} photo${loadedCount > 1 ? "s" : ""}`;
+
+    // Move loader down once loading starts
+    document.getElementById("globalLoader").classList.add("moving");
+
+    // Add image to gallery immediately
     images.push(src);
-
     const card = document.createElement("div");
-    card.className="card";
-
+    card.className = "card";
     card.innerHTML = `
       <img src="${src}">
       <div class="overlay"></div>
       <a class="download" href="${src}" download>⬇</a>
     `;
-
     card.onclick = () => openLightbox(images.indexOf(src));
     gallery.appendChild(card);
   };
+
+  // Ignore missing images silently
+  img.onerror = () => {};
 }
 
-// Lightbox functions
-function openLightbox(index){
-  current=index;
-  document.getElementById("lightbox").classList.add("active");
-  showImg();
-}
-
-function closeLightbox(){
-  document.getElementById("lightbox").classList.remove("active");
-}
-
-function showImg(){
-  document.getElementById("lightboxImg").src = images[current];
-  document.getElementById("counter").innerText =
-    `${current+1} / ${images.length}`;
-}
-
-function nextImg(){
-  if(current < images.length-1){ current++; showImg(); }
-}
-
-function prevImg(){
-  if(current > 0){ current--; showImg(); }
-}
-
-loadedCount++;
-
-if(loadedCount === images.length){
-  document.getElementById("globalLoader")?.classList.add("hidden");
-}
+// Stop loader when browser finishes all requests
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    document.getElementById("globalLoader").classList.add("done");
+  }, 800);
+});
 </script>
 
 </body>
