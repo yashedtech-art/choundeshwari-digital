@@ -286,6 +286,183 @@ header span{
   70%{ opacity:1 }
   100%{ opacity:0; visibility:hidden }
 }
+
+
+/* ===============================
+   1. SKELETON SHIMMER LOADER
+================================*/
+.card{
+  background:linear-gradient(
+    110deg,
+    #151722 25%,
+    #1c1f33 37%,
+    #151722 63%
+  );
+  background-size:400% 100%;
+  animation:skeleton 1.4s ease infinite;
+}
+
+@keyframes skeleton{
+  0%{background-position:100% 0}
+  100%{background-position:0 0}
+}
+
+/* Image fades in → skeleton illusion ends */
+.card img{
+  background:#151722;
+  opacity:0;
+  animation:imgReveal 1s ease forwards;
+  animation-delay:.4s;
+}
+
+@keyframes imgReveal{
+  to{opacity:1}
+}
+
+/* ===============================
+   2. AI MAGIC OVERLAY
+================================*/
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:5;
+  background:
+    radial-gradient(circle at center,rgba(124,140,255,.25),transparent 65%),
+    rgba(10,12,24,.85);
+  backdrop-filter:blur(6px);
+  animation:magicOut 1.6s ease forwards;
+  pointer-events:none;
+}
+
+.card::after{
+  content:"ENHANCING MAGIC ✨";
+  position:absolute;
+  inset:0;
+  z-index:6;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  letter-spacing:3px;
+  color:#d6dcff;
+  animation:
+    textPulse 1.2s ease infinite,
+    magicOut 1.6s ease forwards;
+  pointer-events:none;
+}
+
+@keyframes textPulse{
+  0%,100%{opacity:.5}
+  50%{opacity:1}
+}
+
+@keyframes magicOut{
+  0%{opacity:1}
+  75%{opacity:1}
+  100%{opacity:0; visibility:hidden}
+}
+
+/* ===============================
+   3. SCROLL REVEAL EFFECT
+================================*/
+.card{
+  opacity:0;
+  transform:translateY(20px) scale(.98);
+  animation:reveal .8s ease forwards;
+}
+
+@keyframes reveal{
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+/* ===============================
+   4. MICRO INTERACTIONS
+================================*/
+.card:active{
+  transform:scale(.97);
+}
+
+.download{
+  transition:.25s ease;
+}
+
+.download:active{
+  transform:scale(.92);
+}
+
+/* ===============================
+   5. WATERMARK PREVIEW
+================================*/
+.card img{
+  position:relative;
+}
+
+.card img::after{
+  content:"CHOUNDESHWARI DIGITAL";
+  position:absolute;
+  bottom:12px;
+  left:12px;
+  font-size:10px;
+  letter-spacing:2px;
+  color:rgba(255,255,255,.35);
+}
+
+/* ===============================
+   6. STORY MODE FEEL (LIGHTBOX)
+================================*/
+.lightbox::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  height:3px;
+  width:100%;
+  background:linear-gradient(
+    90deg,
+    var(--accent),
+    transparent
+  );
+  animation:storyBar 3s linear infinite;
+}
+
+@keyframes storyBar{
+  from{transform:translateX(-100%)}
+  to{transform:translateX(100%)}
+}
+
+/* ===============================
+   7. CINEMATIC IMAGE SHADOW
+================================*/
+.lightbox img{
+  animation:cinema 1s ease;
+}
+
+@keyframes cinema{
+  from{
+    transform:scale(.95);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+/* ===============================
+   8. MICRO COPY EMOTION
+================================*/
+header::after{
+  content:"Crafting memories with care ✦";
+  display:block;
+  font-size:10px;
+  letter-spacing:2px;
+  color:rgba(255,255,255,.35);
+  margin-top:4px;
+}
 </style>
 </head>
 
