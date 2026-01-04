@@ -440,6 +440,53 @@ header span{
   position:relative;
   z-index:2;
 }
+
+
+/* GLOBAL LOADER */
+#globalLoader{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:
+    radial-gradient(circle at center,rgba(124,140,255,.25),transparent 60%),
+    #0b0c12;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation:fadeIn .3s ease;
+}
+
+#globalLoader.hidden{
+  animation:fadeOut .6s ease forwards;
+}
+
+@keyframes fadeOut{
+  to{
+    opacity:0;
+    visibility:hidden;
+  }
+}
+
+.magic{
+  text-align:center;
+  font-size:14px;
+  letter-spacing:3px;
+  color:#dfe4ff;
+}
+
+.magic span{
+  display:block;
+  margin-top:10px;
+  font-size:11px;
+  letter-spacing:2px;
+  opacity:.7;
+  animation:pulse 1.4s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:.4}
+  50%{opacity:1}
+}
 </style>
 </head>
 
@@ -449,6 +496,13 @@ header span{
   <h1>CHOUNDESHWARI DIGITAL</h1>
   <span id="custName">Customer Gallery</span>
 </header>
+
+<div id="globalLoader">
+  <div class="magic">
+    ✨ Creating Magic ✨
+    <span>Preparing memories…</span>
+  </div>
+</div>
 
 <div class="gallery" id="gallery"></div>
 
@@ -468,6 +522,9 @@ header span{
 </div>
 
 <script>
+    
+    let loadedCount = 0;
+    
 const params = new URLSearchParams(window.location.search);
 const folder = params.get("folder");
 
@@ -529,6 +586,12 @@ function nextImg(){
 
 function prevImg(){
   if(current > 0){ current--; showImg(); }
+}
+
+loadedCount++;
+
+if(loadedCount === images.length){
+  document.getElementById("globalLoader")?.classList.add("hidden");
 }
 </script>
 
